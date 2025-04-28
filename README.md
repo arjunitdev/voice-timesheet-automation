@@ -1,4 +1,4 @@
-# Timesheet Automation
+# Voice Timesheet Automation
 
 A Python application that uses speech recognition to automate timesheet entries.
 
@@ -34,7 +34,9 @@ A Python application that uses speech recognition to automate timesheet entries.
 pip install openai pandas openpyxl sounddevice scipy openai-whisper
 ```
 
-3. Set your OpenAI API key in the `timesheet.py` file
+3. Set up your OpenAI API key:
+   - Create a `.env` file based on `.env.example`
+   - Add your OpenAI API key
 
 ## Usage
 
