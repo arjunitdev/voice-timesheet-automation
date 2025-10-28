@@ -45,15 +45,8 @@ except ImportError:
     print("Warning: Audio recording modules not available. Interactive mode will not work.")
     sd = None
 
-# ==========================
-# OPENAI API KEY
-# ==========================
-# Replace with your API key or use environment variables
-openai.api_key = "YOUR_API_KEY_HERE"  # DO NOT COMMIT API KEYS
+openai.api_key = ""  
 
-# ==========================
-# AUDIO RECORDING
-# ==========================
 def record_audio(file_path, duration=15, sample_rate=16000):
     """Record audio for a specified duration and save to file_path"""
     try:
@@ -63,7 +56,7 @@ def record_audio(file_path, duration=15, sample_rate=16000):
             os.makedirs(directory, exist_ok=True)
             print(f"Directory exists: {directory}")
         
-        print(f"🎙️ Recording for {duration} seconds...")
+        print(f"Recording for {duration} seconds...")
         
         # Countdown
         for i in range(3, 0, -1):
@@ -71,7 +64,7 @@ def record_audio(file_path, duration=15, sample_rate=16000):
             time.sleep(1)
         
         # Record audio
-        print("🔴 Recording NOW - Speak clearly...")
+        print("Recording NOW - Speak clearly...")
         recording = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channels=1, dtype='float32')
         
         # Show progress during recording
@@ -84,14 +77,14 @@ def record_audio(file_path, duration=15, sample_rate=16000):
         
         # Check if recording contains data
         if recording.size == 0:
-            print("⚠️ Warning: Recording appears to be empty.")
+            print(" Warning: Recording appears to be empty.")
             return False
             
         max_amplitude = np.max(np.abs(recording))
-        print(f"📊 Maximum audio level: {max_amplitude:.4f}")
+        print(f"Maximum audio level: {max_amplitude:.4f}")
         
         if max_amplitude < 0.01:
-            print("⚠️ Audio level is very low. Please speak louder or check your microphone.")
+            print(" Audio level is very low. Please speak louder or check your microphone.")
             # Still try to save it
         
         # Normalize audio (improve volume)
@@ -101,20 +94,20 @@ def record_audio(file_path, duration=15, sample_rate=16000):
             normalized_recording = recording
         
         # Save recording to file using scipy.io.wavfile.write
-        print(f"💾 Saving recording to {file_path}...")
+        print(f"Saving recording to {file_path}...")
         write(file_path, sample_rate, normalized_recording)
         
         # Verify file was created
         if os.path.exists(file_path):
             file_size = os.path.getsize(file_path)
-            print(f"✅ Recording saved successfully to {file_path} (Size: {file_size} bytes)")
+            print(f"Recording saved successfully to {file_path} (Size: {file_size} bytes)")
             return True
         else:
-            print(f"❌ Failed to save recording to {file_path}")
+            print(f" Failed to save recording to {file_path}")
             return False
             
     except Exception as e:
-        print(f"❌ Error recording audio: {e}")
+        print(f"Error recording audio: {e}")
         import traceback
         traceback.print_exc()
         return False
@@ -124,7 +117,7 @@ def record_audio(file_path, duration=15, sample_rate=16000):
 # ==========================
 def transcribe_audio(file_path):
     """Transcribe audio file to text using Whisper (locally or API)"""
-    print(f"🔊 Transcribing audio file: {file_path}")
+    print(f"Transcribing audio file: {file_path}")
     
     try:
         # Use local Whisper model if available (preferred for privacy & cost)
@@ -141,7 +134,7 @@ def transcribe_audio(file_path):
             result = model.transcribe(file_path)
             transcribed_text = result["text"]
             
-            print(f"✅ Transcription successful: {transcribed_text[:100]}...")
+            print(f" Transcription successful: {transcribed_text[:100]}...")
             return transcribed_text
         else:
             # Use OpenAI API for transcription
@@ -155,11 +148,11 @@ def transcribe_audio(file_path):
                 
             transcribed_text = response.get("text", "")
             
-            print(f"✅ Transcription successful: {transcribed_text[:100]}...")
+            print(f"Transcription successful: {transcribed_text[:100]}...")
             return transcribed_text
             
     except Exception as e:
-        print(f"❌ Error transcribing audio: {e}")
+        print(f"Error transcribing audio: {e}")
         import traceback
         traceback.print_exc()
         return None
@@ -170,7 +163,7 @@ def transcribe_audio(file_path):
 def process_with_gpt(text):
     """Process transcribed text using GPT to extract structured data"""
     try:
-        print("🧠 Processing with GPT...")
+        print("Processing with GPT...")
         
         prompt = f"""The following is a transcription of daily activities. Extract the data in the following format:
 
@@ -195,7 +188,7 @@ Transcription: '{text}'
         )
         
         extracted_data = response.choices[0].message.content
-        print(f"✅ GPT processing successful")
+        print(f"GPT processing successful")
         print(f"Extracted data:\n{extracted_data}")
         
         return extracted_data
@@ -234,7 +227,7 @@ def calculate_time_elapsed(start_time_str, end_time_str):
             return f"{int(hours)} hrs {int(minutes)} mins"
         
     except Exception as e:
-        print(f"❌ Error calculating time elapsed: {e}")
+        print(f"Error calculating time elapsed: {e}")
         return "N/A"
 
 # ==========================
@@ -266,7 +259,7 @@ def update_excel(date, day, start_time, end_time, time_elapsed, task):
         # Save the workbook
         wb.save(FILE_PATH)
         
-        print(f"✅ Excel updated with new entry: {date} - {task}")
+        print(f"Excel updated with new entry: {date} - {task}")
         return True
         
     except Exception as e:
@@ -280,7 +273,7 @@ def update_excel(date, day, start_time, end_time, time_elapsed, task):
 # ==========================
 def main():
     """Main function for the timesheet application"""
-    print("\n🌟 Voice Timesheet Application 🌟\n")
+    print("\nVoice Timesheet Application\n")
     
     while True:
         command = input("\nPress Enter to record (or type 'exit' to quit, 'view' to see timesheet): ").strip().lower()
